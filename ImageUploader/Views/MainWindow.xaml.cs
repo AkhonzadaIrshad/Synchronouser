@@ -23,31 +23,29 @@ namespace ImageUploader.Views
         public MainWindow()
         {
             InitializeComponent();
-            BusyIndicator = InstancePoolService.CreateInstance<BusyIndicator>();
-            AppService = InstancePoolService.CreateInstance<AppService>();
-            LoggingHelper = AppService.LoggingHelper;
+            BusyIndicator   = InstancePoolService.CreateInstance<BusyIndicator>();
+            AppService      = InstancePoolService.CreateInstance<AppService>();
+            LoggingHelper   = AppService.LoggingHelper;
             DirectoryHelper = AppService.DirectoryManager;
-            Bootstrapper = new Bootstrapper(AppService);
-            LoggList = AppService.LoggList;
+            Bootstrapper    = new Bootstrapper(AppService);
+            LoggList        = AppService.LoggList;
 
             LoggingHelper.OnNewLog += LoggingHelper_OnNewLog;
-            Bootstrapper.OnLoad += OnBootstrapp;
+            Bootstrapper.OnLoad    += OnBootstrapp;
             Bootstrapper.Load();
 
-            AutoSync autoSync = InstancePoolService.CreateInstance<AutoSync>();
+            var autoSync = InstancePoolService.CreateInstance<AutoSync>();
             autoSync.OnFileUploaded += AutoSyncOnOnFileUploaded;
             autoSync.OnUploadFailed += AutoSyncOnOnUploadFailed;
             autoSync.Start(this);
-
         }
 
 
-
-        private BusyIndicator BusyIndicator { get; }
-        private IAppService AppService { get; }
-        private LoggingHelper LoggingHelper { get; }
+        private BusyIndicator    BusyIndicator   { get; }
+        private IAppService      AppService      { get; }
+        private LoggingHelper    LoggingHelper   { get; }
         private DirectoryManager DirectoryHelper { get; }
-        private Bootstrapper Bootstrapper { get; }
+        private Bootstrapper     Bootstrapper    { get; }
 
         private static ObservableCollection<LoggViewModel> LoggList { get; set; }
 
@@ -79,19 +77,18 @@ namespace ImageUploader.Views
 
         private void LoggingHelper_OnNewLog(object sender, EventArgs e)
         {
-            var args = (CustomLoggArgs)e;
+            var args = (CustomLoggArgs) e;
             LoggList.Add(new LoggViewModel
             {
-                Id = LoggList.Count + 1,
-                Date = DateTime.Now,
-                Summary = args.Exception.Message,
+                Id          = LoggList.Count + 1,
+                Date        = DateTime.Now,
+                Summary     = args.Exception.Message,
                 Description = args.Exception.ToFriendlyError()
             });
-            LogsTab.Tag = LoggList.Count;
-            LogsTab.Header = $"Logs ({LoggList.Count})";
+            LogsTab.Tag           = LoggList.Count;
+            LogsTab.Header        = $"Logs ({LoggList.Count})";
             LoggsGrid.ItemsSource = LoggList;
         }
-
 
 
         private void Move(ImageEventArgs args)
@@ -112,14 +109,14 @@ namespace ImageUploader.Views
         {
             try
             {
-                var list = ((MainWindow)sender).PendingImagesGrid.Children
+                var list = ((MainWindow) sender).PendingImagesGrid.Children
                     .OfType<Grid>()
                     .ToList();
                 if (list.Count <= 0) return;
-                var args = (ImageEventArgs)e;
+                var args = (ImageEventArgs) e;
                 Move(args);
                 var tag = args.ImagePath.GetFileName();
-                var g = list.First(x => x.Tag.Equals(tag));
+                var g   = list.First(x => x.Tag.Equals(tag));
                 PendingImagesGrid.Children.Remove(g);
                 AppService.CreateImagesGrid(new List<string>
                 {
@@ -127,10 +124,10 @@ namespace ImageUploader.Views
                 }, FailedImagesGrid, FailedScroller, false);
 
                 var up = Convert.ToInt32(FailedTab.Tag) + 1;
-                FailedTab.Tag = up;
+                FailedTab.Tag    = up;
                 FailedTab.Header = $"Failed ({up})";
                 var down = Convert.ToInt32(PendingTab.Tag) - 1;
-                PendingTab.Tag = down;
+                PendingTab.Tag    = down;
                 PendingTab.Header = $"Pending ({down})";
             }
             catch (Exception ex)
@@ -143,11 +140,11 @@ namespace ImageUploader.Views
         {
             try
             {
-                var list = ((MainWindow)sender).PendingImagesGrid.Children
+                var list = ((MainWindow) sender).PendingImagesGrid.Children
                     .OfType<Grid>()
                     .ToList();
 
-                var args = (ImageEventArgs)e;
+                var args = (ImageEventArgs) e;
                 //DirectoryHelper.HelperJob(HelperAction.Move, args.ImagePath, args.TargetPath);
                 Move(args);
 
@@ -159,15 +156,14 @@ namespace ImageUploader.Views
                 }, CompletedImagesGrid, CompletedScroller, false);
 
                 var up = Convert.ToInt32(CompletedTab.Tag) + 1;
-                CompletedTab.Tag = up;
+                CompletedTab.Tag    = up;
                 CompletedTab.Header = $"Completed ({up})";
                 var down = Convert.ToInt32(PendingTab.Tag) - 1;
-                PendingTab.Tag = down;
+                PendingTab.Tag    = down;
                 PendingTab.Header = $"Pending ({down})";
 
                 var done = Convert.ToInt32(LoaderInfoArea.Tag) + 1;
                 LoaderInfoArea.Tag = done;
-
 
 
                 if (list.Count <= 0) return;
@@ -176,8 +172,6 @@ namespace ImageUploader.Views
                 var g = list.First(x => x.Tag.Equals(tag));
                 PendingImagesGrid.Children.Remove(g);
                 BusyIndicator.Start(LoaderInfoGif, LoaderInfoText, $"uploaded ({done})");
-
-
             }
             catch (Exception ex)
             {
@@ -186,38 +180,31 @@ namespace ImageUploader.Views
         }
 
 
-
         private void AutoSyncOnOnUploadFailed(object sender, EventArgs e)
         {
-            var args = (ImageEventArgs)e;
+            var args = (ImageEventArgs) e;
             Move(args);
             AppService.CreateImagesGrid(new List<string>
             {
                 Path.Combine(DirectoryHelper.FailedImagesPath, args.ImagePath.GetFileName())
             }, FailedImagesGrid, FailedScroller, false);
             var up = Convert.ToInt32(FailedTab.Tag) + 1;
-            FailedTab.Tag = up;
+            FailedTab.Tag    = up;
             FailedTab.Header = $"Failed ({up})";
-
         }
 
         private void AutoSyncOnOnFileUploaded(object sender, EventArgs e)
         {
-            var args = (ImageEventArgs)e;
+            var args = (ImageEventArgs) e;
             Move(args);
             AppService.CreateImagesGrid(new List<string>
             {
                 Path.Combine(DirectoryHelper.UploadedImagesPath, args.ImagePath.GetFileName())
             }, CompletedImagesGrid, CompletedScroller, false);
             var up = Convert.ToInt32(CompletedTab.Tag) + 1;
-            CompletedTab.Tag = up;
+            CompletedTab.Tag    = up;
             CompletedTab.Header = $"Completed ({up})";
-
         }
-
-
-
-
 
 
         private void BrowseBtnClick(object sender, RoutedEventArgs e)
@@ -227,16 +214,16 @@ namespace ImageUploader.Views
 
             var dialog = new OpenFileDialog
             {
-                DefaultExt = ".jpg",
-                Filter = ConfigManager.GetValue(ConfigKeys.FileDialogFilter),
+                DefaultExt  = ".jpg",
+                Filter      = ConfigManager.GetValue(ConfigKeys.FileDialogFilter),
                 Multiselect = true
             };
             var result = dialog.ShowDialog();
             if (result != true) return;
             DragDropArea.Visibility = Visibility.Hidden;
-            PendingScroller.Tag = "0,0,1";
+            PendingScroller.Tag     = "0,0,1";
             var count = Convert.ToInt32(PendingTab.Tag) + dialog.FileNames.Length;
-            PendingTab.Tag = count;
+            PendingTab.Tag    = count;
             PendingTab.Header = $"pending ({count})";
             var gridMade = AppService.CreateImagesGrid(dialog.FileNames, PendingImagesGrid, PendingScroller, true);
             if (!gridMade) MessageBox.Show("Grid Generation Failed");
@@ -250,8 +237,8 @@ namespace ImageUploader.Views
             {
                 AppService.MoveToUpload(images);
                 var manualSync = InstancePoolService.CreateInstance<ManualSync>();
-                manualSync.OnFileUploaded += SyncHelper_onFileUploaded;
-                manualSync.OnUploadFailed += SyncHelper_OnUploadFailed;
+                manualSync.OnFileUploaded     += SyncHelper_onFileUploaded;
+                manualSync.OnUploadFailed     += SyncHelper_OnUploadFailed;
                 manualSync.OnAllFilesUploaded += SyncHelper_OnAllFilesUploaded;
                 manualSync.Start(this);
                 BusyIndicator.Start(LoaderInfoGif, LoaderInfoText);
@@ -265,11 +252,11 @@ namespace ImageUploader.Views
         private void SyncHelper_OnAllFilesUploaded(object sender, EventArgs e)
         {
             BusyIndicator.Stop(LoaderInfoGif, LoaderInfoText);
-            PendingTab.Tag = "0";
-            PendingTab.Header = "Pending";
-            PendingScroller.Tag = "0,0,1";
+            PendingTab.Tag           = "0";
+            PendingTab.Header        = "Pending";
+            PendingScroller.Tag      = "0,0,1";
             PendingImagesGrid.Height = 103;
-            DragDropArea.Visibility = Visibility.Visible;
+            DragDropArea.Visibility  = Visibility.Visible;
         }
 
         private void MarkAll_Click(object sender, RoutedEventArgs e)
@@ -285,7 +272,7 @@ namespace ImageUploader.Views
         private void ClearAll_Click(object sender, RoutedEventArgs e)
         {
             DragDropArea.Visibility = Visibility.Visible;
-            PendingScroller.Tag = "0,0,1";
+            PendingScroller.Tag     = "0,0,1";
             AppService.ClearAll(PendingImagesGrid);
         }
 
@@ -298,10 +285,10 @@ namespace ImageUploader.Views
         {
             if (!e.Data.GetDataPresent(DataFormats.FileDrop)) return;
             DragDropArea.Visibility = Visibility.Hidden;
-            var files = (string[])e.Data.GetData(DataFormats.FileDrop);
+            var files = (string[]) e.Data.GetData(DataFormats.FileDrop);
 
             var count = Convert.ToInt32(PendingTab.Tag) + files?.Length;
-            PendingTab.Tag = count == null ? 0 : Convert.ToInt32(count);
+            PendingTab.Tag    = count == null ? 0 : Convert.ToInt32(count);
             PendingTab.Header = $"pending ({count?.ToString()})";
             AppService.CreateImagesGrid(files, PendingImagesGrid, PendingScroller, true);
         }
@@ -316,7 +303,7 @@ namespace ImageUploader.Views
                 };
 
                 dialog.ShowDialog();
-                CustomPath.Text = dialog.FileName;
+                CustomPath.Text                = dialog.FileName;
                 new SettingHelper().CustomPath = CustomPath.Text;
                 DirectoryHelper.CreateDirectories();
             }
@@ -330,7 +317,7 @@ namespace ImageUploader.Views
 
         private void UIElement_OnGotFocus(object sender, RoutedEventArgs e)
         {
-            CustomPath.Text = new SettingHelper().CustomPath;
+            CustomPath.Text       = new SettingHelper().CustomPath;
             actionMenu.Visibility = Visibility.Hidden;
         }
 

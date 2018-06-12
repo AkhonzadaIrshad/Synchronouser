@@ -52,6 +52,7 @@ namespace ImageUploaderLibrary.Managers
                 return path;
             }
         }
+
         public string PendingImagesPath
         {
             get

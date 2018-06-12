@@ -11,35 +11,34 @@ namespace ImageUploader.Models.Helpers
 {
     public class ImageEventArgs : EventArgs
     {
-        public string ImagePath { get; set; }
+        public string ImagePath  { get; set; }
         public string TargetPath { get; set; }
     }
 
 
     public class SyncHelper
     {
-       //private  static SyncHelper Helper { get; set; }
-       // public SyncHelper CreateInstance()
-       // {
-       //     if (Helper==null)
-       //         return new SyncHelper();
-       //     return Helper;
-       // }
+        //private  static SyncHelper Helper { get; set; }
+        // public SyncHelper CreateInstance()
+        // {
+        //     if (Helper==null)
+        //         return new SyncHelper();
+        //     return Helper;
+        // }
         protected SyncHelper()
         {
-            Timer = new Timer();
+            Timer           = new Timer();
             DirectoryHelper = new DirectoryManager();
-            LoggingHelper = new LoggingHelper();
-
+            LoggingHelper   = new LoggingHelper();
         }
+
+        protected Timer            Timer           { get; }
+        protected DirectoryManager DirectoryHelper { get; }
+        private   LoggingHelper    LoggingHelper   { get; }
 
         public event EventHandler OnFileUploaded;
         public event EventHandler OnUploadFailed;
         public event EventHandler OnAllFilesUploaded;
-
-        protected Timer Timer { get; }
-        protected DirectoryManager DirectoryHelper { get; }
-        private LoggingHelper LoggingHelper { get; }
 
         private byte[] ImageToByteArray(Image image)
         {
@@ -58,7 +57,7 @@ namespace ImageUploader.Models.Helpers
                 foreach (var filePath in images)
                 {
                     var isUploaded = false;
-                    var tags = filePath.GetFileTags();
+                    var tags       = filePath.GetFileTags();
                     var fileNotExists = !DirectoryHelper.FileExists(Path.Combine(
                         DirectoryHelper.UploadedImagesPath,
                         filePath.GetFileName()));
@@ -79,21 +78,23 @@ namespace ImageUploader.Models.Helpers
                             isUploaded = false;
                         }
                     }
+
                     var done = fileNotExists && isUploaded;
                     if (done)
                         OnFileUploaded?.Invoke(sender, new ImageEventArgs
                         {
-                            ImagePath = filePath,
+                            ImagePath  = filePath,
                             TargetPath = path
                         });
                     else
                         OnUploadFailed?.Invoke(sender, new ImageEventArgs
                         {
-                            ImagePath = filePath,
+                            ImagePath  = filePath,
                             TargetPath = path
                         });
                     OnAllFilesUploaded?.Invoke(sender, EventArgs.Empty);
                 }
+
                 return true;
             }
             catch (Exception e)
@@ -110,10 +111,10 @@ namespace ImageUploader.Models.Helpers
                 client.DefaultRequestHeaders
                         .Authorization =
                     new AuthenticationHeaderValue("Bearer", ConfigManager.GetValue(ConfigKeys.AuthToken));
-                var apiUri = ConfigManager.GetValue(ConfigKeys.UploadImagesUrl);
+                var apiUri             = ConfigManager.GetValue(ConfigKeys.UploadImagesUrl);
                 var imageBinaryContent = new ByteArrayContent(fileBytes);
-                var fileNameContent = new StringContent(fileName);
-                var fileTagsContent = new StringContent(fileTags);
+                var fileNameContent    = new StringContent(fileName);
+                var fileTagsContent    = new StringContent(fileTags);
 
                 var multipartContent = new MultipartFormDataContent
                 {

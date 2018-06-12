@@ -1,18 +1,14 @@
 ﻿using System;
-using System.Drawing;
-using System.IO;
 using ImageUploaderLibrary.Managers;
 
 namespace ImageUploader.Models.Helpers
 {
     public class AutoSync : SyncHelper
     {
-
-       
         public void Start(object sender)
         {
-            Timer.Tick += (x, y) => SynchFiles(sender);
-            Timer.Interval = Convert.ToInt32(ConfigManager.GetValue(ConfigKeys.SyncImagesInterval));
+            Timer.Tick     += (x, y) => SynchFiles(sender);
+            Timer.Interval =  Convert.ToInt32(ConfigManager.GetValue(ConfigKeys.SyncImagesInterval));
             Timer.Start();
         }
 
@@ -21,8 +17,5 @@ namespace ImageUploader.Models.Helpers
             var files = DirectoryHelper.GetDirectoryFile(DirectoryHelper.SourcePath);
             await Sync(files, sender);
         }
-
-        
-
     }
 }

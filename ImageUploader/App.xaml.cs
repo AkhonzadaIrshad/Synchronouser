@@ -1,7 +1,6 @@
 ﻿using System.ComponentModel;
 using System.Windows;
 using System.Windows.Forms;
-using ImageUploader.Models.Helpers;
 using ImageUploader.Views;
 using Application = System.Windows.Application;
 
@@ -25,9 +24,6 @@ namespace ImageUploader
             _notifyIcon.Icon        =  ImageUploader.Properties.Resources.MyIcon;
             _notifyIcon.Visible     =  true;
             CreateContextMenu();
-
-        
-
         }
 
         private void CreateContextMenu()
@@ -35,7 +31,7 @@ namespace ImageUploader
             _notifyIcon.ContextMenuStrip =
                 new ContextMenuStrip();
             _notifyIcon.ContextMenuStrip.Items.Add("MainWindow").Click += (s, e) => ShowMainWindow();
-            _notifyIcon.ContextMenuStrip.Items.Add("Exit").Click          += (s, e) => ExitApplication();
+            _notifyIcon.ContextMenuStrip.Items.Add("Exit").Click       += (s, e) => ExitApplication();
         }
 
         private void ExitApplication()
