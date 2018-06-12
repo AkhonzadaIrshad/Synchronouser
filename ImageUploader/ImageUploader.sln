@@ -1,0 +1,50 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.27130.2027
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ImageUploader", "ImageUploader\ImageUploader.csproj", "{EAFB0AD9-B62E-4D1D-948D-407BB7819812}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "WindowsApplication", "WindowsApplication", "{35DCABFD-FBD6-43DC-8F73-47F4E96A2FDA}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "WindowsServices", "WindowsServices", "{F577BDA0-B2B1-46D9-B4AB-CEC0C090D125}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{EAFB0AD9-B62E-4D1D-948D-407BB7819812}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EAFB0AD9-B62E-4D1D-948D-407BB7819812}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EAFB0AD9-B62E-4D1D-948D-407BB7819812}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EAFB0AD9-B62E-4D1D-948D-407BB7819812}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{EAFB0AD9-B62E-4D1D-948D-407BB7819812} = {35DCABFD-FBD6-43DC-8F73-47F4E96A2FDA}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {627308CE-1221-4125-AAAB-562178CC08C1}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {627308CE-1221-4125-AAAB-562178CC08C1}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {627308CE-1221-4125-AAAB-562178CC08C1}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {627308CE-1221-4125-AAAB-562178CC08C1}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {627308CE-1221-4125-AAAB-562178CC08C1}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {627308CE-1221-4125-AAAB-562178CC08C1}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {627308CE-1221-4125-AAAB-562178CC08C1}
+	EndGlobalSection
+EndGlobal
