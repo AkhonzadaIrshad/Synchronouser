@@ -11,7 +11,7 @@ namespace ImageUploader.Models.Helpers
 {
     public class ImageEventArgs : EventArgs
     {
-        public string ImagePath  { get; set; }
+        public string ImagePath { get; set; }
         public string TargetPath { get; set; }
     }
 
@@ -27,14 +27,14 @@ namespace ImageUploader.Models.Helpers
         // }
         protected SyncHelper()
         {
-            Timer           = new Timer();
+            Timer = new Timer();
             DirectoryHelper = new DirectoryManager();
-            LoggingHelper   = new LoggingHelper();
+            LoggingHelper = new LoggingHelper();
         }
 
-        protected Timer            Timer           { get; }
+        protected Timer Timer { get; }
         protected DirectoryManager DirectoryHelper { get; }
-        private   LoggingHelper    LoggingHelper   { get; }
+        private LoggingHelper LoggingHelper { get; }
 
         public event EventHandler OnFileUploaded;
         public event EventHandler OnUploadFailed;
@@ -49,7 +49,7 @@ namespace ImageUploader.Models.Helpers
             }
         }
 
-
+        private static string tempFileName = String.Empty;
         protected async Task<bool> Sync(string[] images, object sender)
         {
             try
@@ -57,7 +57,7 @@ namespace ImageUploader.Models.Helpers
                 foreach (var filePath in images)
                 {
                     var isUploaded = false;
-                    var tags       = filePath.GetFileTags();
+                    var tags = filePath.GetFileTags();
                     var fileNotExists = !DirectoryHelper.FileExists(Path.Combine(
                         DirectoryHelper.UploadedImagesPath,
                         filePath.GetFileName()));
@@ -67,9 +67,12 @@ namespace ImageUploader.Models.Helpers
                         path = DirectoryHelper.UploadedImagesPath;
                         try
                         {
+                            var fileName = filePath.GetFileName();
+                            if (tempFileName.Equals(fileName)) return false;
+                            tempFileName = fileName;
                             using (var img = Image.FromFile(filePath))
                             {
-                                isUploaded = await Upload(ImageToByteArray(img), filePath.GetFileName(), tags);
+                                isUploaded = await Upload(ImageToByteArray(img), fileName, tags);
                             }
                         }
                         catch (Exception e)
@@ -83,13 +86,13 @@ namespace ImageUploader.Models.Helpers
                     if (done)
                         OnFileUploaded?.Invoke(sender, new ImageEventArgs
                         {
-                            ImagePath  = filePath,
+                            ImagePath = filePath,
                             TargetPath = path
                         });
                     else
                         OnUploadFailed?.Invoke(sender, new ImageEventArgs
                         {
-                            ImagePath  = filePath,
+                            ImagePath = filePath,
                             TargetPath = path
                         });
                     OnAllFilesUploaded?.Invoke(sender, EventArgs.Empty);
@@ -97,24 +100,26 @@ namespace ImageUploader.Models.Helpers
 
                 return true;
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                Console.WriteLine(e);
+                LoggingHelper.Save(ex);
                 return false;
             }
         }
 
+
         private async Task<bool> Upload(byte[] fileBytes, string fileName, string fileTags)
         {
+
             using (var client = new HttpClient())
             {
                 client.DefaultRequestHeaders
-                        .Authorization =
-                    new AuthenticationHeaderValue("Bearer", ConfigManager.GetValue(ConfigKeys.AuthToken));
-                var apiUri             = ConfigManager.GetValue(ConfigKeys.UploadImagesUrl);
+                      .Authorization =
+                       new AuthenticationHeaderValue("Bearer", ConfigManager.GetValue(ConfigKeys.AuthToken));
+                var apiUri = ConfigManager.GetValue(ConfigKeys.UploadImagesUrl);
                 var imageBinaryContent = new ByteArrayContent(fileBytes);
-                var fileNameContent    = new StringContent(fileName);
-                var fileTagsContent    = new StringContent(fileTags);
+                var fileNameContent = new StringContent(fileName);
+                var fileTagsContent = new StringContent(fileTags);
 
                 var multipartContent = new MultipartFormDataContent
                 {

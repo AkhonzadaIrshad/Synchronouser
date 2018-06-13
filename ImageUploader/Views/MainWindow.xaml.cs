@@ -96,13 +96,11 @@ namespace ImageUploader.Views
             var moved = DirectoryHelper.HelperJob(HelperAction.Move,
                 args.ImagePath,
                 args.TargetPath);
-            if (!moved)
-            {
-                var nameWithStamp = $"{DateTime.Now:yyyyMMddHHmmssffff}|" +
-                                    $"{args.ImagePath?.GetFileName()}";
-                DirectoryHelper.HelperJob(HelperAction.Move,
-                    args.ImagePath, DirectoryHelper.TempDirectory, nameWithStamp.Replace("|", ""));
-            }
+            if (moved) return;
+            var nameWithStamp = $"{DateTime.Now:yyyyMMddHHmmssffff}|" +
+                                $"{args.ImagePath?.GetFileName()}";
+            DirectoryHelper.HelperJob(HelperAction.Move,
+                args.ImagePath, DirectoryHelper.TempDirectory, nameWithStamp.Replace("|", ""));
         }
 
         private void SyncHelper_OnUploadFailed(object sender, EventArgs e)
@@ -143,7 +141,7 @@ namespace ImageUploader.Views
                 var list = ((MainWindow) sender).PendingImagesGrid.Children
                     .OfType<Grid>()
                     .ToList();
-
+                if (list.Count <= 0) return;
                 var args = (ImageEventArgs) e;
                 //DirectoryHelper.HelperJob(HelperAction.Move, args.ImagePath, args.TargetPath);
                 Move(args);

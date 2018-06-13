@@ -3,7 +3,7 @@ using ImageUploaderLibrary.Managers;
 
 namespace ImageUploader.Models.Helpers
 {
-    public class ManualSync : SyncHelper
+    public  class ManualSync : SyncHelper
     {
         public void Start(object sender)
         {
@@ -14,6 +14,7 @@ namespace ImageUploader.Models.Helpers
 
         private async void SynchFiles(object sender = null)
         {
+            Timer.Interval = 10000;
             var files = DirectoryHelper.GetDirectoryFile(DirectoryHelper.PendingImagesPath);
             await Sync(files, sender);
         }
