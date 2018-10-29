@@ -36,5 +36,24 @@ namespace ApplicationTest.Data
                 }
             };
         }
+		
+        public static Grid GetGrid2()
+        {
+            return new Grid
+            {
+                Tag        = FileWithTags.GetFileName(),
+                Height     = 80,
+                Width      = 80,
+                Background = Brushes.LightGray,
+                Children =
+                {
+                    new Image
+                    {
+                        Source = new BitmapImage(new Uri(FileWithTags))
+                    },
+                    new GifHelper()
+                }
+            };
+        }
     }
 }
